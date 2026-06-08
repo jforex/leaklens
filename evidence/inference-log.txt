@@ -1,0 +1,41 @@
+[2026-06-08T13:43:19.905Z] LeakLens inference log — all inference local via QVAC SDK on CPU-only Intel MacBook
+[2026-06-08T13:43:19.908Z] STATUS: Loading local AI model (QVAC)…
+[sdk:server] 🐻 Hello from Bare
+[sdk:server] Parsed RPC configuration from arguments
+[sdk:server] Running in desktop mode, connecting to IPC socket: /var/folders/t0/tc3nr3cj5kj9nvxsdk4203380000gn/T/qvac-worker-4485-mq59h6ju-5955.sock
+[sdk:server] Connecting to IPC socket at /var/folders/t0/tc3nr3cj5kj9nvxsdk4203380000gn/T/qvac-worker-4485-mq59h6ju-5955.sock
+[sdk:server] Bare worker started and listening for RPC requests
+[sdk:server] Connected to IPC server
+[sdk:client] ℹ️ No config file found, using SDK defaults
+[sdk:client] 📱 Runtime context: { runtime: 'node', platform: 'darwin' }
+[sdk:client] ✅ Initialization complete
+[sdk:server] [request-lifecycle] begin requestId=8dc24844-3d2c-4b25-ad38-0f429941696f kind=loadModel modelId=- state=running
+[sdk:server] Loading from registry: unsloth/Qwen3-1.7B-GGUF/resolve/d7f544eead698dbd1f15126ef60b45a1e1933222/Qwen3-1.7B-Q4_0.gguf
+[sdk:server] ✅ Model cached with correct size: /Users/macbook/.qvac/models/f7cce66406dee646_Qwen3-1.7B-Q4_0.gguf
+[sdk:server] ✅ Model already cached and validated: /Users/macbook/.qvac/models/f7cce66406dee646_Qwen3-1.7B-Q4_0.gguf
+[sdk:server] ✅ Using cached model: /Users/macbook/.qvac/models/f7cce66406dee646_Qwen3-1.7B-Q4_0.gguf
+[sdk:server] Loaded Model to /Users/macbook/.qvac/models/f7cce66406dee646_Qwen3-1.7B-Q4_0.gguf
+[sdk:server] llamacpp-completion: Loading model 8449bacbee980290...
+[sdk:server] llamacpp-completion model 8449bacbee980290 loaded
+[sdk:server] Local model registered: 8449bacbee980290 (QWEN3_1_7B_INST_Q4) -> /Users/macbook/.qvac/models/f7cce66406dee646_Qwen3-1.7B-Q4_0.gguf
+[sdk:server] [request-lifecycle] end requestId=8dc24844-3d2c-4b25-ad38-0f429941696f kind=loadModel modelId=- state=completed durationMs=7016
+[2026-06-08T13:43:28.767Z] STATUS: Ready — all analysis runs locally on this device.
+[2026-06-08T13:43:28.767Z] Model load time: 8.9s
+[2026-06-08T13:43:28.776Z] Deterministic detection: 10 findings
+[sdk:server] [request-lifecycle] begin requestId=53f4f1b9-d8f4-4a72-bd27-9b2e6a4e3b88 kind=completion modelId=8449bacbee980290 state=running
+[sdk:server] [request-lifecycle] end requestId=53f4f1b9-d8f4-4a72-bd27-9b2e6a4e3b88 kind=completion modelId=8449bacbee980290 state=completed durationMs=17600
+[2026-06-08T13:43:46.403Z] AI explanation (17.6s): This duplication could indicate a system error or manual entry mistake, potentially leading to incorrect fuel usage tracking. Next, review system logs and check for errors around the timestamp.
+[sdk:server] [request-lifecycle] begin requestId=88dce241-d647-480f-a78f-26a2f2b6a2c4 kind=completion modelId=8449bacbee980290 state=running
+[sdk:server] [request-lifecycle] end requestId=88dce241-d647-480f-a78f-26a2f2b6a2c4 kind=completion modelId=8449bacbee980290 state=completed durationMs=16389
+[2026-06-08T13:44:02.797Z] Q: "what is our best-selling item?"
+[2026-06-08T13:44:02.797Z] A (16.4s): The best-selling item is Rice, sold 40 units.
+[sdk:server] Model 8449bacbee980290 unloaded
+[sdk:client] 🧹 No models or providers active, automatically closing RPC connection...
+[sdk:client] 🧹 Closing RPC client
+[sdk:client] 🐻🔫 Killing bare worker process
+[sdk:client] 🔌 Closing IPC server
+[sdk:server] 🐻 Bare worker shutdown signal received, cleaning up...
+[sdk:server] 🧹 Cancelling 0 active downloads
+[sdk:server] Unloaded 0 models
+[sdk:server] ✅ Cleanup completed successfully
+[2026-06-08T13:44:02.951Z] Shutdown complete. Total run: 43.0s

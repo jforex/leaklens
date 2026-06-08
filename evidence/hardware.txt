@@ -1,0 +1,20 @@
+=== HARDWARE PROOF — LeakLens runs fully local on this machine ===
+
+      Model Name: MacBook Pro
+      Processor Name: Quad-Core Intel Core i7
+      Processor Speed: 2.8 GHz
+      Number of Processors: 1
+      Total Number of Cores: 4
+      Memory: 16 GB
+
+ProductName:		macOS
+ProductVersion:		13.7.8
+BuildVersion:		22H730
+
+Architecture: x86_64
+Node: v25.8.1
+QVAC SDK: 0.12.2
+
+Local model used: Qwen3-1.7B-Q4_0 (GGUF), gpu_layers:0 (CPU-only)
+Cached at: ~/.qvac/models/
+-rw-r--r--  1 macbook  staff   1.0G Jun  7 00:51 f7cce66406dee646_Qwen3-1.7B-Q4_0.gguf

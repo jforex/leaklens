@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LeakLens</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root{
+    --bg:#0d100f; --panel:#141a18; --line:#1f2a26; --ink:#e7efea; --muted:#7e918a;
+    --accent:#3ad6a0; --high:#ff5d5d; --med:#f5b73d; --low:#5aa9e6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Space Grotesk',sans-serif;height:100vh;overflow:hidden;}
+  .app{display:flex;flex-direction:column;height:100vh;}
+  header{padding:20px 28px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;}
+  .brand{font-size:22px;font-weight:700;letter-spacing:-0.5px;}
+  .brand span{color:var(--accent);}
+  .tagline{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  .badge{font-size:10px;color:var(--accent);border:1px solid var(--accent);border-radius:20px;padding:5px 12px;letter-spacing:1px;}
+  .toolbar{padding:16px 28px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  button{font-family:inherit;font-size:13px;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:10px 16px;border-radius:7px;cursor:pointer;transition:.15s;}
+  button:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+  button:disabled{opacity:.4;cursor:not-allowed;}
+  button.primary{background:var(--accent);color:#06120d;border-color:var(--accent);font-weight:500;}
+  button.primary:hover:not(:disabled){opacity:.9;color:#06120d;}
+  .filechip{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .filechip b{color:var(--accent);}
+  .status{margin-left:auto;font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:6px;animation:pulse 1.4s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  main{flex:1;overflow-y:auto;padding:24px 28px;}
+  .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;gap:8px;}
+  .empty h2{font-size:18px;color:var(--ink);font-weight:500;}
+  .summary{display:flex;gap:14px;margin-bottom:22px;}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 18px;flex:1;}
+  .stat .n{font-size:26px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+  .stat .l{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+  .stat.high .n{color:var(--high);} .stat.med .n{color:var(--med);} .stat.total .n{color:var(--accent);}
+  .finding{background:var(--panel);border:1px solid var(--line);border-left-width:3px;border-radius:9px;padding:16px 18px;margin-bottom:12px;animation:rise .3s ease both;}
+  .finding.high{border-left-color:var(--high);} .finding.medium{border-left-color:var(--med);} .finding.low{border-left-color:var(--low);}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .fhead{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+  .sev{font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 8px;border-radius:4px;text-transform:uppercase;}
+  .sev.high{background:rgba(255,93,93,.15);color:var(--high);} .sev.medium{background:rgba(245,183,61,.15);color:var(--med);} .sev.low{background:rgba(90,169,230,.15);color:var(--low);}
+  .ftype{font-weight:500;font-size:14px;}
+  .fdetail{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.6;}
+  .fai{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.55;color:var(--ink);}
+  .fai .lbl{font-size:9px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:4px;}
+  .fai.loading{color:var(--muted);font-style:italic;}
+  .askbar{position:sticky;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:16px 0 4px;margin-top:24px;}
+  .askbar .row{display:flex;gap:10px;}
+  .askbar input{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--ink);font-family:inherit;font-size:14px;padding:12px 14px;border-radius:8px;}
+  .askbar input:focus{outline:none;border-color:var(--accent);}
+  .answer{margin-top:12px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:8px;font-size:14px;line-height:1.6;display:none;}
+  .answer .lbl{font-size:9px;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;display:block;margin-bottom:5px;}
+  .bd{width:100%;border-collapse:collapse;margin:10px 0 4px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .bd td{padding:7px 10px;border-bottom:1px solid var(--line);}
+  .bd td:first-child{color:var(--muted);}
+  .bd td:last-child{text-align:right;color:var(--ink);font-weight:500;}
+  .bd tr.leak td:last-child{color:var(--high);}
+  .bd tr.leak td:first-child{color:var(--high);}
+  .bd-title{font-size:14px;font-weight:500;margin-bottom:2px;}
+  .askbar .hint{font-size:11px;color:var(--muted);margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div>
+      <div class="brand">Leak<span>Lens</span></div>
+      <div class="tagline">Local-first truth layer for business records</div>
+    </div>
+    <div class="badge">◆ 100% ON-DEVICE</div>
+  </header>
+  <div class="toolbar">
+    <button id="initBtn" class="primary">INITIALISE</button>
+    <button id="expBtn" disabled>＋ EXPENSES CSV</button>
+    <button id="invBtn" disabled>＋ INVENTORY CSV</button>
+    <button id="purBtn" disabled>＋ PURCHASES CSV</button>
+    <button id="salBtn" disabled>＋ SALES CSV</button>
+    <button id="sampleBtn" disabled>USE SAMPLE DATA</button>
+    <button id="runBtn" disabled class="primary">▷ ANALYZE</button>
+    <span class="filechip" id="files"></span>
+    <span class="status" id="status">idle</span>
+  </div>
+  <main>
+    <div class="empty" id="empty">
+      <h2>No analysis yet</h2>
+      <div>Initialise the local AI, load your CSV data (or use samples), then Analyze.</div>
+    </div>
+    <div id="results" style="display:none;">
+      <div class="summary" id="summary"></div>
+      <div id="list"></div>
+      <div class="askbar">
+        <div class="row">
+          <input id="qInput" placeholder="Ask your data:  what's our best-selling product?  which item didn't sell?  total expenses?" />
+          <button id="askBtn" class="primary">ASK</button>
+          <button id="stopBtn" style="display:none;">STOP</button>
+        </div>
+        <div class="answer" id="answer"></div>
+        <div class="hint">Answers are computed from your data and phrased by the local AI. Nothing leaves your device.</div>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+  const $ = id => document.getElementById(id);
+  const initBtn=$('initBtn'),expBtn=$('expBtn'),invBtn=$('invBtn'),sampleBtn=$('sampleBtn'),runBtn=$('runBtn');
+  const purBtn=$('purBtn'),salBtn=$('salBtn');
+  const qInput=$('qInput'),askBtn=$('askBtn'),answer=$('answer'),stopBtn=$('stopBtn');
+  const statusEl=$('status'),filesEl=$('files'),empty=$('empty'),results=$('results'),summary=$('summary'),list=$('list');
+  let paths={expensesPath:null,inventoryPath:null,purchasesPath:null,salesPath:null};
+
+  window.leaklens.onStatus(s=>statusEl.textContent=s);
+
+  function refreshFiles(){
+    const parts=[];
+    if(paths.expensesPath)parts.push('exp:<b>'+paths.expensesPath.split('/').pop()+'</b>');
+    if(paths.inventoryPath)parts.push('inv:<b>'+paths.inventoryPath.split('/').pop()+'</b>');
+    if(paths.purchasesPath)parts.push('pur:<b>'+paths.purchasesPath.split('/').pop()+'</b>');
+    if(paths.salesPath)parts.push('sal:<b>'+paths.salesPath.split('/').pop()+'</b>');
+    filesEl.innerHTML=parts.join('  ');
+    runBtn.disabled=!(paths.expensesPath||paths.inventoryPath);
+  }
+
+  initBtn.onclick=async()=>{
+    initBtn.disabled=true;statusEl.innerHTML='<span class="dot"></span>loading local AI…';
+    await window.leaklens.init();
+    expBtn.disabled=false;invBtn.disabled=false;purBtn.disabled=false;salBtn.disabled=false;sampleBtn.disabled=false;
+    initBtn.textContent='✓ READY';
+  };
+  expBtn.onclick=async()=>{const p=await window.leaklens.pickFile('expenses');if(p){paths.expensesPath=p;refreshFiles();}};
+  invBtn.onclick=async()=>{const p=await window.leaklens.pickFile('inventory');if(p){paths.inventoryPath=p;refreshFiles();}};
+  purBtn.onclick=async()=>{const p=await window.leaklens.pickFile('purchases');if(p){paths.purchasesPath=p;refreshFiles();}};
+  salBtn.onclick=async()=>{const p=await window.leaklens.pickFile('sales');if(p){paths.salesPath=p;refreshFiles();}};
+  sampleBtn.onclick=async()=>{paths=await window.leaklens.useSamples();refreshFiles();statusEl.textContent='sample data loaded';};
+
+  runBtn.onclick=async()=>{
+    runBtn.disabled=true;statusEl.innerHTML='<span class="dot"></span>detecting anomalies…';
+    const findings=await window.leaklens.analyze(paths);
+    empty.style.display='none';results.style.display='block';
+
+    const high=findings.filter(f=>f.severity==='high').length;
+    const med=findings.filter(f=>f.severity==='medium').length;
+    summary.innerHTML=
+      '<div class="stat total"><div class="n">'+findings.length+'</div><div class="l">Total Findings</div></div>'+
+      '<div class="stat high"><div class="n">'+high+'</div><div class="l">High Severity</div></div>'+
+      '<div class="stat med"><div class="n">'+med+'</div><div class="l">Medium / Low</div></div>';
+
+    list.innerHTML='';
+    findings.forEach((f,i)=>{
+      const el=document.createElement('div');el.className='finding '+f.severity;
+      el.innerHTML='<div class="fhead"><span class="sev '+f.severity+'">'+f.severity+'</span><span class="ftype">'+f.type+'</span></div>'+
+                   '<div class="fdetail">'+f.detail+'</div>'+
+                   '<div class="fai loading" id="ai'+i+'"><span class="lbl">AI Analysis</span>analysing…</div>';
+      list.appendChild(el);
+    });
+
+    statusEl.innerHTML='<span class="dot"></span>AI explaining findings…';
+    for(let i=0;i<findings.length;i++){
+      const ex=await window.leaklens.explain(findings[i]);
+      const box=$('ai'+i);box.classList.remove('loading');
+      box.innerHTML='<span class="lbl">AI Analysis · local</span>'+ex;
+    }
+    statusEl.textContent='analysis complete · '+findings.length+' findings · 100% local';
+    runBtn.disabled=false;
+  };
+
+  let askToken=0;
+  function stopAsk(){
+    askToken++;            // invalidate any in-flight answer
+    askBtn.style.display='';stopBtn.style.display='none';askBtn.disabled=false;
+    answer.innerHTML='<span class="lbl">Answer</span><span style="color:var(--muted)">Stopped. Ask again.</span>';
+  }
+  stopBtn.onclick=stopAsk;
+
+  async function doAsk(){
+    const q=qInput.value.trim();if(!q)return;
+    const myToken=++askToken;
+    askBtn.style.display='none';stopBtn.style.display='';
+    answer.style.display='block';answer.innerHTML='<span class="lbl">Answer</span>thinking locally…';
+    const res=await window.leaklens.askData(q,paths);
+    if(myToken!==askToken)return;   // a stop or newer question happened; ignore this result
+    askBtn.style.display='';stopBtn.style.display='none';
+    let html='<span class="lbl">Answer · local AI</span>';
+    if(res.breakdown){
+      const b=res.breakdown;
+      html+='<div class="bd-title">'+b.item+'</div>';
+      html+='<table class="bd">';
+      for(const [label,val] of b.rows){
+        const isLeak=label.toLowerCase().includes('leak')&&b.leak!==0;
+        html+='<tr'+(isLeak?' class="leak"':'')+'><td>'+label+'</td><td>'+val+'</td></tr>';
+      }
+      html+='</table>';
+      html+='<div style="margin-top:8px;">'+res.text+'</div>';
+    } else {
+      html+=res.text;
+    }
+    answer.innerHTML=html;
+  }
+  askBtn.onclick=doAsk;
+  qInput.addEventListener('keydown',e=>{if(e.key==='Enter')doAsk();});
+</script>
+</body>
+</html>

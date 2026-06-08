@@ -1,0 +1,13 @@
+id,date,time,category,vendor,amount,description,approved_by
+1,2026-05-01,09:15,Fuel,Station A,20000,Diesel for truck,Manager
+2,2026-05-01,09:18,Fuel,Station A,20000,Diesel for truck,Manager
+3,2026-05-02,14:30,Supplies,VendorX,15000,Cleaning supplies,Manager
+4,2026-05-03,11:00,Fuel,Station B,21000,Diesel,Manager
+5,2026-05-04,10:00,Maintenance,FixIt,45000,Generator repair,
+6,2026-05-05,16:20,Fuel,Station A,20000,Diesel,Manager
+7,2026-05-06,08:00,Supplies,VendorX,15000,Cleaning supplies,Manager
+8,2026-05-07,13:00,Fuel,Station A,85000,Diesel bulk,Manager
+9,2026-05-08,12:00,Misc,,5000,,Manager
+10,2026-05-09,15:00,Fuel,Station B,20500,Diesel,Manager
+11,2026-05-10,15:02,Fuel,Station B,20500,Diesel,Manager
+12,2026-05-11,09:00,Supplies,VendorX,15000,Cleaning supplies,Manager
