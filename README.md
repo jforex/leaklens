@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/renderer/assets/logo.png" alt="LeakLens" height="120" />
+</p>
+
 # LeakLens
 
 **A local-first "truth layer" for small-business records.** LeakLens imports your business data (expenses, inventory, purchases, sales), detects leaks and anomalies with a deterministic engine, and uses a fully on-device AI model to explain each finding in plain language and answer free-form questions about your data. Nothing ever leaves your device.
@@ -20,7 +24,7 @@ It does this in three layers:
 
 1. **Deterministic detection** — rules and arithmetic find anomalies. This layer cannot hallucinate; a leak is a leak because the math says so.
 2. **Local AI explanation** — an on-device language model explains *why* each finding matters and suggests a next step, in plain business language.
-3. **Ask your data** — free-form natural-language questions are answered from figures computed in code, so answers are grounded in real numbers, never invented.
+3. **Ask your data** — free-form natural-language questions are answered from figures computed in code, so answers are grounded in real numbers, never invented. For item-specific questions, the exact figures are rendered directly from code as a breakdown table, with the model adding only a short plain-language sentence on top.
 
 ### Detectors
 
@@ -55,18 +59,24 @@ The core design principle: **deterministic code computes the truth; the AI model
                                              |
     "Ask your data" -> figures computed in code -> Local LLM -> grounded answer
 
-This split is what makes LeakLens trustworthy. The model never invents a leak and never does the arithmetic behind an answer — it phrases facts that were already computed. For item-specific questions, the exact figures are rendered directly from code as a breakdown table, with the model adding only a single sentence on top.
+This split is what makes LeakLens trustworthy. The model never invents a leak and never does the arithmetic behind an answer — it phrases facts that were already computed.
 
-- **Detection engine:** src/detectors.mjs (pure functions, no AI)
-- **AI + orchestration:** src/engine.mjs (QVAC model load, explanations, query answering)
-- **Desktop shell:** Electron (src/main/), web-based UI (src/renderer/)
+- **Detection engine:** `src/detectors.mjs` (pure functions, no AI)
+- **AI + orchestration:** `src/engine.mjs` (QVAC model load, explanations, query answering)
+- **Desktop shell:** Electron (`src/main/`), with a clean dashboard UI (`src/renderer/`)
+
+## Interface
+
+A clean desktop dashboard: load your data (or the bundled samples), click Analyze, and review severity-ranked findings — each with an on-device AI explanation — alongside a findings-by-severity overview and an "Ask your data" box for free-form questions. Fully offline, with a "100% on-device" indicator.
 
 ## Local model
 
-- Model: Qwen3-1.7B-Q4_0 (GGUF)
-- Runtime: QVAC SDK (@qvac/sdk)
-- Inference: CPU-only (gpu_layers: 0)
-- Context: 4096 tokens
+| | |
+|---|---|
+| Model | Qwen3-1.7B-Q4_0 (GGUF) |
+| Runtime | QVAC SDK (`@qvac/sdk`) |
+| Inference | CPU-only (`gpu_layers: 0`) |
+| Context | 4096 tokens |
 
 ## Requirements
 
@@ -84,25 +94,25 @@ This split is what makes LeakLens trustworthy. The model never invents a leak an
 
 On first launch:
 
-1. Click **INITIALISE** — loads the local AI model (cached after first download).
-2. Click **USE SAMPLE DATA** to try the bundled example files, or load your own CSVs with the + EXPENSES / INVENTORY / PURCHASES / SALES buttons.
-3. Click **ANALYZE** — findings appear instantly, each with an AI explanation.
+1. Click **Initialise** — loads the local AI model (cached after first download).
+2. Click **Use sample data** to try the bundled example files, or load your own CSVs with the Expenses / Inventory / Purchases / Sales buttons.
+3. Click **Analyze** — findings appear instantly, each with an AI explanation.
 4. Use **Ask your data** to ask free-form questions ("what's our best-selling item?", "how much oil is unaccounted for?").
 
 ### Data formats
 
-- expenses.csv — id, date, time, category, vendor, amount, description, approved_by
-- inventory.csv — item, initial_stock, counted_closing, unit
-- purchases.csv — date, item, quantity, cost
-- sales.csv — date, item, quantity_sold
+- `expenses.csv` — id, date, time, category, vendor, amount, description, approved_by
+- `inventory.csv` — item, initial_stock, counted_closing, unit
+- `purchases.csv` — date, item, quantity, cost
+- `sales.csv` — date, item, quantity_sold
 
-Bundled sample data (in sample-data/) contains deliberately planted anomalies so you can see every detector fire.
+Bundled sample data (in `sample-data/`) contains deliberately planted anomalies so you can see every detector fire.
 
 ## Evidence
 
-The evidence/ folder contains:
-- hardware.txt — the constrained consumer hardware this was built and verified on (Intel Core i7, 16 GB, CPU-only, macOS).
-- inference-log.txt — a timed end-to-end run showing local model load, detection, AI explanation, and Q&A, with the QVAC engine logs.
+The `evidence/` folder contains:
+- `hardware.txt` — the constrained consumer hardware this was built and verified on (Intel Core i7, 16 GB, CPU-only, macOS).
+- `inference-log.txt` — a timed end-to-end run showing local model load, detection, AI explanation, and Q&A, with the QVAC engine logs.
 
 ## Roadmap — from vertical to platform
 
@@ -116,4 +126,4 @@ The goal is a local-first "truth layer" that any business can point at its own r
 
 ## License
 
-MIT — see LICENSE.
+MIT — see [LICENSE](LICENSE).
